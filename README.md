@@ -1,2 +1,1 @@
-# free-monad-app
-Designing and Implementing an App withFree Monads
+# Designing and Implementing an App with Free Monads
