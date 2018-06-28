@@ -1,7 +1,10 @@
-package app3
+package app3a
 
+import cats.data.EitherK
+
+import scala.language.higherKinds
 import cats.free.Free
-import cats.{Id, ~>}
+import cats.{Id, InjectK, ~>}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
@@ -18,14 +21,18 @@ object MyApp extends App {
     final case object Getline extends Inout[String]
 
     // DSL
-    def printline(out: String): Free[Inout, Unit] = Free.liftF(Printline(out))
-    def getline: Free[Inout, String] = Free.liftF(Getline)
-    def ask(prompt: String): Free[Inout, String] = for {
-      _ <- printline(prompt)
-      input <- getline
-    } yield input // same as:
-    def ask2(prompt: String): Free[Inout, String] =
-      printline(prompt).flatMap(_ => getline)
+    class InoutOps[F[_]](implicit IO: InjectK[Inout, F]) {
+      def printline(out: String): Free[F, Unit] = Free.inject[Inout, F](Printline(out))
+      def getline: Free[F, String] = Free.inject[Inout, F](Getline)
+      def ask(prompt: String): Free[F, String] = for {
+        _ <- printline(prompt)
+        input <- getline
+      } yield input
+    }
+
+    object InoutOps {
+      implicit def inoutOps[F[_]](implicit IO: InjectK[Inout, F]): InoutOps[F] = new InoutOps[F]
+    }
   }
 
   object interpreter {
@@ -75,10 +82,10 @@ object MyApp extends App {
 
   // program definition (does nothing)
 
-  def prog: Free[Inout, (String, Int)] = for {
-    name <- ask("What's your name?")
-    age <- ask("What's your age?")
-    _ <- printline(s"Hello $name! Your age is $age!")
+  def prog(implicit io: InoutOps[Inout]): Free[Inout, (String, Int)] = for {
+    name <- io.ask("What's your name?")
+    age <- io.ask("What's your age?")
+    _ <- io.printline(s"Hello $name! Your age is $age!")
   } yield (name, age.toInt)
 
   def execSync(): Unit = {

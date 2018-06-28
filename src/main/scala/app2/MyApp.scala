@@ -14,13 +14,15 @@ object MyApp extends App {
 
     // DSL
     def printline(out: String): Free[Inout, Unit] = Free.liftF(Printline(out))
-
     def getline: Free[Inout, String] = Free.liftF(Getline)
 
     def ask(prompt: String): Free[Inout, String] = for {
       _ <- printline(prompt)
       input <- getline
     } yield input
+
+    def ask2(prompt: String): Free[Inout, String] =
+      printline(prompt).flatMap(_ => getline)
   }
 
   object interpreter {
@@ -45,15 +47,13 @@ object MyApp extends App {
   import interpreter._
 
   // program definition (does nothing)
-
   def prog: Free[Inout, (String, Int)] = for {
     name <- ask("What's your name?")
     age <- ask("What's your age?")
     _ <- printline(s"Hello $name! Your age is $age!")
   } yield (name, age.toInt)
 
-  // program execution: the program must be combined with an interpreter
-
+  // program execution: invoke program with an interpreter
   println("\n----- Execute program with ConsoleInterpreter")
   val result: Id[(String, Int)] = prog.foldMap(ConsoleInterpreter)
   println(s"\nresult = $result")

@@ -1,6 +1,6 @@
 import sbt.Resolver
 
-name := "playing-with-free-monad"
+name := "free-monad-app"
 version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.12.6"

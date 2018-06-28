@@ -12,6 +12,7 @@ object dsl {
 
   class SeqOps[F[_]](implicit KV: InjectK[Sequence, F]) {
     def nextId: Free[F, Long] = Free.inject[Sequence, F](NextId)
+    def nextStringId: Free[F, String] = nextId.map(_.toString)
   }
 
   object SeqOps {

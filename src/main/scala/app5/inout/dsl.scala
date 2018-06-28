@@ -13,7 +13,7 @@ object dsl {
   final case object Getline extends Inout[String]
 
   // DSL
-  class Inouts[F[_]](implicit IO: InjectK[Inout, F]) {
+  class IoOps[F[_]](implicit IO: InjectK[Inout, F]) {
     def printline(out: String): Free[F, Unit] = Free.inject[Inout, F](Printline(out))
     def getline: Free[F, String] = Free.inject[Inout, F](Getline)
     def ask(prompt: String): Free[F, String] = for {
@@ -22,7 +22,7 @@ object dsl {
     } yield input
   }
 
-  object Inouts {
-    implicit def inouts[F[_]](implicit IO: InjectK[Inout, F]): Inouts[F] = new Inouts[F]
+  object IoOps {
+    implicit def ioOpss[F[_]](implicit IO: InjectK[Inout, F]): IoOps[F] = new IoOps[F]
   }
 }

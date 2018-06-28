@@ -1,7 +1,8 @@
-package app3
+package app3freek
 
 import cats.free.Free
 import cats.{Id, ~>}
+import freek._
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
@@ -17,15 +18,18 @@ object MyApp extends App {
     final case class Printline(out: String) extends Inout[Unit]
     final case object Getline extends Inout[String]
 
-    // DSL
-    def printline(out: String): Free[Inout, Unit] = Free.liftF(Printline(out))
-    def getline: Free[Inout, String] = Free.liftF(Getline)
-    def ask(prompt: String): Free[Inout, String] = for {
-      _ <- printline(prompt)
-      input <- getline
-    } yield input // same as:
-    def ask2(prompt: String): Free[Inout, String] =
-      printline(prompt).flatMap(_ => getline)
+    // DSL: no lifting or injecting needed with Freek
+
+    type PRG = Inout :|: NilDSL
+    val prg = DSL.Make[PRG]
+
+    def ask(prompt: String): Free[prg.Cop, String] = for {
+      _ <- Printline(prompt).freek[PRG]
+      input <- Getline.freek[PRG]
+    } yield input
+
+    def ask2(prompt: String): Free[prg.Cop, String] =
+      Printline(prompt).freek[PRG].flatMap(_ => Getline.freek[PRG])
   }
 
   object interpreter {
@@ -75,35 +79,38 @@ object MyApp extends App {
 
   // program definition (does nothing)
 
-  def prog: Free[Inout, (String, Int)] = for {
-    name <- ask("What's your name?")
-    age <- ask("What's your age?")
-    _ <- printline(s"Hello $name! Your age is $age!")
+  type AppDSL = Inout :|: NilDSL
+  val appDSL = DSL.Make[AppDSL]
+
+  def prog: Free[appDSL.Cop, (String, Int)] = for {
+    name <- ask("What's your name?").expand[AppDSL]
+    age <- ask("What's your age?").expand[AppDSL]
+    _ <- Printline(s"Hello $name! Your age is $age!").freek[AppDSL]
   } yield (name, age.toInt)
+
+  // program execution: the program must be combined with an interpreter
 
   def execSync(): Unit = {
     println("\n----- Execute program with ConsoleInterpreter")
-    val result: Id[(String, Int)] = prog.foldMap(ConsoleInterpreter)
+    val result: Id[(String, Int)] = prog.interpret(ConsoleInterpreter)
     println(s"result = $result")
   }
-  // execSync()
 
   def execAsync(): Unit = {
     println("\n----- Execute program with AsyncInterpreter")
 
     import cats.instances.future._ // bring implicit monad instance for Future into scope
 
-    val future: Future[(String, Int)] = prog.foldMap(AsyncInterpreter)
+    val future: Future[(String, Int)] = prog.interpret(AsyncInterpreter)
     val result = Await.result(future, 15.second)
     println(s"result = $result")
   }
-  // execAsync()
 
   def execTest(): Unit = {
     println("\n----- Execute program with TestInterpreter")
     val inputs = ListBuffer[String]("John Doe", "33")
     val outputs = ListBuffer[String]()
-    val result: Id[(String, Int)] = prog.foldMap(new TestInterpreter(inputs, outputs))
+    val result: Id[(String, Int)] = prog.interpret(new TestInterpreter(inputs, outputs))
     println(s"result = $result")
     println(s"outputs = $outputs")
     // Test:
@@ -112,6 +119,9 @@ object MyApp extends App {
     assert(outputs == ListBuffer("What's your name?", "What's your age?", "Hello John Doe! Your age is 33!"))
     println("asserted outputs ok")
   }
+
+  // execSync()
+  // execAsync()
   execTest()
 
   println("\n-----\n")

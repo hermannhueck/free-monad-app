@@ -1,14 +1,13 @@
-package app3
+package myfreeimpl
 
-import cats.free.Free
-import cats.{Id, ~>}
+import cats.Id
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
-object MyApp extends App {
+object MyApp3 extends App {
 
   object dsl {
 

@@ -11,7 +11,7 @@ object interpreter {
 
   import dsl._
 
-  def KvsInterpreter: KVStore ~> Id = new (KVStore ~> Id) {
+  object KvsInterpreter extends (KVStore ~> Id) {
 
     var kvs: Map[String, Cat] = Map.empty
 

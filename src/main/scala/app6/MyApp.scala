@@ -17,16 +17,16 @@ object MyApp extends App {
 
   type AppDSL[A] = EitherK[CatManagement, Inout, A]
 
-  // program definition (does nothing)
-
   def prog1(implicit io: Inouts[AppDSL],
-            co: CatOps[AppDSL]): Free[AppDSL, Option[Cat]] = {
+            cm: CatOps[AppDSL]): Free[AppDSL, Option[Cat]] = {
     for {
       name <- io.ask("Cat's name?")
       age <- io.ask("Cat's age?")
-      cat <- co.create(Cat(name, age.toInt))
+      cat <- cm.create(Cat(name, age.toInt))
+      newAge <- io.ask("That was a lie! Tell me the correct age!")
+      _ <- cm.updateById(cat.copy(age = newAge.toInt))
       _ <- io.printline(s"Hello cat ${cat.name}! Your age is ${cat.age}!")
-      optCat <- co.findById(cat.id)
+      optCat <- cm.findById(cat.id)
     } yield optCat
   }
 

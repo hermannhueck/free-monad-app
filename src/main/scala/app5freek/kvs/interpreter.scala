@@ -1,4 +1,4 @@
-package app5.kvs
+package app5freek.kvs
 
 import cats.{Id, ~>}
 
@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object interpreter {
 
-  import app5.model.Cat
+  import app5freek.model.Cat
   import dsl._
 
   object KVSInterpreter extends (KVStore ~> Id) {

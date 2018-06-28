@@ -1,7 +1,8 @@
-package app1
+package app1freek
 
 import cats.free.Free
 import cats.{Id, ~>}
+import freek._
 
 object MyApp extends App {
 
@@ -10,9 +11,7 @@ object MyApp extends App {
   final case class Printline(out: String) extends Inout[Unit]
   case object Getline extends Inout[String]
 
-  // DSL
-  def printline(out: String): Free[Inout, Unit] = Free.liftF(Printline(out))
-  def getline: Free[Inout, String] = Free.liftF(Getline)
+  // DSL: no lifting or injecting needed with Freek
 
   // interpreter
   object ConsoleInterpreter extends (Inout ~> Id) {
@@ -27,18 +26,24 @@ object MyApp extends App {
     }
   }
 
+  type AppDSL = Inout :|: NilDSL
+  val appDSL = DSL.Make[AppDSL]
+
+  // val interpreter: Interpreter[PRG.Cop, Id] = ConsoleInterpreter
+
   // program definition (does nothing)
-  def prog: Free[Inout, (String, Int)] = for {
-    _ <- printline("What's your name?")
-    name <- getline
-    _ <- printline("What's your age?")
-    age <- getline
-    _ <- printline(s"Hello $name! Your age is $age!")
+  def prog: Free[appDSL.Cop, (String, Int)] = for {
+    _ <- Printline("What's your name?").freek[AppDSL]
+    name <- Getline.freek[AppDSL]
+    _ <- Printline("What's your age?").freek[AppDSL]
+    age <- Getline.freek[AppDSL]
+    _ <- Printline(s"Hello $name! Your age is $age!").freek[AppDSL]
   } yield (name, age.toInt)
 
-  // program execution: invoke program with an interpreter
+  // program execution: the program must be combined with an interpreter
+
   println("\n----- Execute program with ConsoleInterpreter")
-  val result: Id[(String, Int)] = prog.foldMap(ConsoleInterpreter)
+  val result: Id[(String, Int)] = prog.interpret(ConsoleInterpreter) // same as: prog.foldMap(ConsoleInterpreter.nat)
   println(s"\nresult = $result")
 
   println("\n-----\n")
