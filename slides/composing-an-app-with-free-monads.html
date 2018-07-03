@@ -146,8 +146,12 @@ class: left, top, inverse
 
 class: center
 
+<br/>
+<br/>
 # Composing an App with
 # Free Monads (using Cats)
+<br/>
+<br/>
 <br/>
 ## &copy; 2018 Hermann Hueck
 <br/>
@@ -165,7 +169,7 @@ Free Monads to a small program.
 
 I discuss the pros and cons of this technique.
 
-Finally I will demonstrate how to avoid boilerplate with the FreeK library.
+Finally I will demonstrate how to avoid some boilerplate with the *FreeK* library.
 
 ---
 
@@ -175,26 +179,35 @@ Finally I will demonstrate how to avoid boilerplate with the FreeK library.
 1. Free Monads - what they are.
 2. Free Monad Recipe
 3. Extending your DSL
-4. FunctionK and Natural Transformation
+4. *FunctionK* and Natural Transformation
 5. More Interpreters
-6. Partial Lifting with 'Free.inject'
+6. Partial Lifting with *Free.inject*
 7. Composing two DSLs and two Interpreters
 8. Composing three DSLs and three Interpreters
 9. Routing the workflow through DSLs
 10. Pros &amp; Cons
-11. The FreeK library
+11. The *FreeK* library
 12. Resources
 
 ---
 
+class: middle, center
+
 # 1. Free Monad - What is it?
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 ---
 
 ## Free Monad - What is it?
 <br/>
 
-A free monad is a construction which allows you to build a monad from any Functor. Like other monads, it is a pure way to represent and manipulate computations.
+A free monad is a construction which allows you to build a monad from any ADT with a type parameter.
+Like other monads, it is a pure way to represent and manipulate computations.
 
 In particular, free monads provide a practical way to:
 
@@ -203,16 +216,22 @@ In particular, free monads provide a practical way to:
 - build an embedded DSL (domain-specific language)
 - retarget a computation to another interpreter using natural transformations
 
-(In cats, the type representing a free monad is abbreviated as Free[_].)
-
 (https://typelevel.org/cats/datatypes/freemonad.html)
 
 ---
 
+class: middle, center
+
 # 2. Free Monad Recipe
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app1.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app1.MyApp*
 ]
 
 ---
@@ -239,8 +258,8 @@ We want to print an output string to the terminal or get a string of user input 
 
 Operations:
 
-- printline(output)
-- input = getline
+- PRINT LINE: displays an output string to the user and returns nothing
+- GET LINE: returns an input string entered by the user
 
 ---
 
@@ -255,10 +274,10 @@ case object Getline extends Inout[String]
 ````
 
 <u>Note:</u> The trait's type parameter represents the return type of an operation.<br/>
-The Printline operation returns nothing, hence it extends Inout[Unit].<br/>
-The Getline operation returns a String, hence it extends Inout[String].
+The *Printline* operation returns nothing, hence it extends *Inout[Unit]*.<br/>
+The *Getline* operation returns a String, hence it extends *Inout[String]*.
 
-The ADT is just <u><i>__computations as data__</i></u>. You cannot use them for program execution, you cannot invoke them.
+The ADT is just <u>__computations as data__</u>. You cannot use them for program execution, you cannot invoke them.
 
 ---
 
@@ -273,7 +292,7 @@ def getline: Free[Inout, String] = Free.liftF(Getline)
 
 Implement a smart constructor (lowercased function) for each element of your ADT. This is your DSL.
 
-Later we will also use Free.inject(...) instead of Free.liftF(...).
+Later we will also use *Free.inject* instead of *Free.liftF*.
 
 ---
 
@@ -295,8 +314,8 @@ object ConsoleInterpreter extends (Inout ~> Id) {
 }
 ```
 
-Every interpreter is/extends a natural transformation from your DSL monad (Inout) to a target monad (id).
-The squiggly arrow is a shortcut for the natural transformation FunctionK.
+Every interpreter is/extends a natural transformation from your DSL monad (Inout) to a target monad (Id).
+The squiggly arrow is a shortcut for the natural transformation *FunctionK*.
 (More on that later in this presentation)
 
 An Interpreter must implement the apply method and is typically a pattern match over the case classes of the ADT.
@@ -323,7 +342,7 @@ The program is not executable.
 
 The program can be written with map and flatMap, but is typically a for comprehension written in your DSL.
 
-The programs return type is a Free[MyADT, RESULT].
+The programs return type is a *Free[MyADT, RESULT]*.
 
 ---
 
@@ -337,17 +356,25 @@ val result: Id[(String, Int)] = prog.foldMap(ConsoleInterpreter)
 println(s"result = $result")
 ````
 
-Use Free.foldMap(...) to execute the program with a specific intrpreter.
+Use *Free.foldMap(...)* to execute the program with a specific intrpreter.
 
-<u><i>Note:</i></u> 'Free.foldMap' internally uses a technique called Tranpolining.
-Trampolining makes the Free Monads stack-safe. No StackOverflowError!
+<u>Note:</u> *Free.foldMap* internally uses a technique called Tranpolining.
+Trampolining makes the Free Monads stack-safe. No *StackOverflowError*!
 
 ---
 
+class: middle, center
+
 # 3. Extending your DSL
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app2.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app2.MyApp*
 ]
 
 ---
@@ -383,8 +410,15 @@ def prog: Free[Inout, (String, Int)] = for {
 
 ---
 
-# 4. FunctionK and
-# &nbsp; &nbsp; &nbsp;Natural Transformation
+class: middle, center
+
+# 4. *FunctionK* and
+# Natural Transformation
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 ---
 
@@ -393,8 +427,8 @@ def prog: Free[Inout, (String, Int)] = for {
 See also: https://typelevel.org/cats/datatypes/functionk.html
 <br/>
 
-Function1[-A, +B] takes an A and returns a B.<br/>
-Shortcut: A => B
+*Function1[-A, +B]* takes an *A* and returns a *B*.<br/>
+Shortcut: *A => B*
 <br/>
 
 ```scala
@@ -404,8 +438,8 @@ trait Function1[-A, +B] {
 }
 ```
 
-FunctionK[F[\_], G[\_]] takes an F[A] and returns a G[A].<br/>
-Shortcut: F ~> G
+*FunctionK[F[\_], G[\_]]* takes an *F[A]* and returns a *G[A]*.<br/>
+Shortcut: *F ~> G*
 <br/>
 
 ```scala
@@ -420,28 +454,28 @@ trait FunctionK[F[_], G[_]] {
 ## FunctionK
 <br/>
 
-Function1: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A &nbsp; --> &nbsp; [A => B] &nbsp; --> &nbsp; B<br/>
+__Function1:__ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A &nbsp; --> &nbsp; [A => B] &nbsp; --> &nbsp; B<br/>
 <br/>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "hello" &nbsp;--> &nbsp; _.length &nbsp; --> &nbsp; 5<br/>
 <br/>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A Function1 changes a value.<br/>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A *Function1* changes a value.<br/>
 
 <br/>
 
-FunctionK: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; F[A] &nbsp; --> &nbsp; [F ~> G] &nbsp; --> &nbsp; G[B]<br/>
+__FunctionK:__ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; F[A] &nbsp; --> &nbsp; [F ~> G] &nbsp; --> &nbsp; G[B]<br/>
 <br/>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; List(1, 2) &nbsp;--> &nbsp; _.headOption &nbsp; --> &nbsp; Some(1)<br/>
 <br/>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A FunctionK changes the context.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A *FunctionK* changes the context.
 
 ---
 
 ## Natural Transformation
 <br/>
 
-If the contexts F and G are Functors, the context conversion is called
+If the contexts *F* and *G* are Functors, the context conversion is called
 
-__Natural Transformation__ or __Functor Transformation__.
+<u>__Natural Transformation__</u> or <u>__Functor Transformation__</u>.
 
 ---
 
@@ -449,8 +483,8 @@ name: FunctionK_4
 
 ## FunctionK
 
-In analogy to Function1 FunctionK also provides methods 'compose' and 'andThen'.
-It also provides a method 'or' which allows to compose two FunctionKs, i.e. two interpreters.
+In analogy to *Function1* *FunctionK* also provides methods *compose* and *andThen*.
+It also provides a method 'or' which allows to compose two *FunctionK*s, i.e. two interpreters.
 (We will use them later.)
 
 ```scala
@@ -475,15 +509,23 @@ trait FunctionK[F[_], G[_]] { self =>
 }
 ```
 
-See: [Usage of 'FunctionK.or'](#ComposeDSLs_4)<br/>
-See: [Usage of 'FunctionK.andThen'](#Routing_1)
+See: [Usage of *FunctionK.or*](#ComposeDSLs_4)<br/>
+See: [Usage of *FunctionK.andThen*](#Routing_1)
 
 ---
 
+class: middle, center
+
 # 5. More Interpreters
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app3.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app3.MyApp*
 ]
 
 ---
@@ -529,19 +571,26 @@ val testResult: Id[(String, Int)] =
 
 ---
 
+class: middle, center
+
 # 6. Partial Lifting
-# &nbsp; &nbsp; &nbsp;with 'Free.inject'
+# with *Free.inject*
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app3a.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app3a.MyApp*
 ]
 
 ---
 
-## 'Free.inject' instead of 'Free.liftF' (1/4)
+## *Free.inject* instead of *Free.liftF* (1/4)
 <br/>
 
-DSL lifted with 'Free.liftF'
+DSL lifted with *Free.liftF*
 
 ```scala
 def printline(out: String): Free[Inout, Unit] = Free.liftF(Printline(out))
@@ -550,7 +599,7 @@ def ask(prompt: String): Free[Inout, String] =
   printline(prompt).flatMap(_ => getline)
 ```
 
-DSL partially lifted with 'Free.inject'
+DSL partially lifted with *Free.inject*
 
 ```scala
 class IoOps[F[_]](implicit IO: InjectK[Inout, F]) {
@@ -567,17 +616,17 @@ object IoOps {
 }
 ```
 
-F[_] is a place holder for another DSL, into which Inout will be injected.
+*F[_]* is a place holder for another DSL, into which Inout will be injected.
 
 ---
 
-## 'Free.inject' instead of Free.liftF (2/4)
+## *Free.inject* instead of *Free.liftF* (2/4)
 <br/>
 
 - Instead of providing the DSL functions directly, pack them into a class.
-- In the class constructor provide an implicit InjectK[YourDSL, F]. (F[_] is a place holder for some DSL that we provide later.)
-- Implement the DSL functions inside the class with 'Free.inject'.
-- Implement the DSL extension function (ask) also inside the new class.
+- In the class constructor provide an implicit *InjectK[YourDSL, F]*. (*F[_]* is a place holder for some DSL that we provide later.)
+- Implement the DSL functions inside the class with *Free.inject*.
+- Implement the DSL extension function (*ask*) also inside the new class.
 - Provide an implicit instance of this class inside the companion object of the class (= implicit scope).
 
 This is a bit more boilerplate than before.<br/>
@@ -585,10 +634,10 @@ But it gives us <u>more flexibility for DSL composition</u>, as we will see late
 
 ---
 
-## 'Free.inject' instead of Free.liftF (3/4)
+## *Free.inject* instead of *Free.liftF* (3/4)
 <br/>
 
-Program for DSL with 'Free.liftF':
+Program for DSL with *Free.liftF*:
 
 ```scala
 def prog: Free[Inout, (String, Int)] = for {
@@ -599,7 +648,7 @@ def prog: Free[Inout, (String, Int)] = for {
 ```
 
 <br/>
-Program for DSL with 'Free.inject':
+Program for DSL with *Free.inject*:
 
 ```scala
 def prog(implicit io: IoOps[Inout]): Free[Inout, (String, Int)] = for {
@@ -611,22 +660,29 @@ def prog(implicit io: IoOps[Inout]): Free[Inout, (String, Int)] = for {
 
 ---
 
-## 'Free.inject' instead of Free.liftF (4/4)
+## *Free.inject* instead of *Free.liftF* (4/4)
 <br/>
-In the definition of IoOps we already defined an Inout as the first type parameter of InjectK[Inout, F].
-Here in the program definition we replace the place holder DSL F with the higher kinded type of another DSL,
-which in this case is also Inout. We have composed Inout with Inout.
+In the definition of *IoOps* we already defined an *Inout* as the first type parameter of *InjectK[Inout, F]*.
+Here in the program definition we replace the place holder DSL *F* with the higher kinded type of another DSL,
+which in this case is also Inout. We have composed *Inout* with another *Inout*.
 
 The benefit of this technique becomes obvious shortly.<br/>
 We will create one composed DSL out of two different component DSLs.
 
 ---
 
+class: middle, center
+
 # 7. Composing two DSLs
-# &nbsp; &nbsp; &nbsp;and two Interpreters
+# and two Interpreters
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app4.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app4.MyApp*
 ]
 
 ---
@@ -757,7 +813,7 @@ object KVSInterpreter
 ```
 ]
 
-<u>Note:</u> Both interpreters have the same target type: Id
+<u>Note:</u> Both interpreters have the same target type: *Id*
 
 ---
 
@@ -784,28 +840,28 @@ val composedInterpreter: AppDSL ~> Id =
 val result: Id[(String, Option[Int])] = prog.foldMap(composedInterpreter)
 ```
 
-- Define a type alias for an EitherK wirth two ADTs
+- Define a type alias for an *EitherK* with two ADTs
 - Provide DSLs as implicit parameters to your program
-- The two component interpreters must have the same target type as the composed interpreter (Id in our case).
+- The two component interpreters must have the same target type as the composed interpreter (*Id* in our case).
 - The composition order of interpreters must be the same as the composition order of the DSLS.
 <br/>
 <br/>
-See: [Definition of FunctionK](#FunctionK_4)
+See: [Definition of *FunctionK*](#FunctionK_4)
 
 ---
 
 ## EitherK (= Coproduct)
 <br/>
 
-Either is parameterized with two types A and B.<br/>
-A is the type of the 'Left', B the type of the Right.
+*Either* is parameterized with two types *A* and *B*.<br/>
+*A* is the type of the *Left*, *B* the type of the *Right*.
 
 ```scala
 sealed abstract class Either[+A, +B] ... { ... }
 ```
 
-EitherK is parameterized with two type constructors F[\_] and G[\_] and a regular type A.
-It's a case class wrapping a value called 'run' of type Either[F[A], G[A]].
+*EitherK* is parameterized with two type constructors *F[\_]* and *G[\_]* and a regular type *A*.
+It's a case class wrapping a value called *run* of type *Either[F[A], G[A]]*.
 
 ```scala
 final case class EitherK[F[_], G[_], A](run: Either[F[A], G[A]]) {
@@ -814,9 +870,9 @@ final case class EitherK[F[_], G[_], A](run: Either[F[A], G[A]]) {
 }
 ```
 
-EitherK is used to define a composed DSL.
+*EitherK* is used to define a composed DSL.
 
-In our example we define AppDSL as an EitherK:
+In our example we define *AppDSL* as an *EitherK*:
 
 ```scala
 type AppDSL[A] = EitherK[Inout, KVStore, A]
@@ -824,16 +880,16 @@ type AppDSL[A] = EitherK[Inout, KVStore, A]
 
 ---
 
-## Partial Lifting with InjectK (1/2)
+## Partial Lifting with *InjectK* (1/2)
 <br/>
 
-InjectK is used for partial lifting into a Free Monad for the composed DSL.
+*InjectK* is used for partial lifting into a Free Monad for the composed DSL.
 
-In class IoOps 'Free.inject' internally injects the Inout into InjectK[Inout, F],
-where the place holder F will be replaced by AppDSL.
+In class IoOps *Free.inject* internally injects the *Inout* into *InjectK[Inout, F]*,
+where the place holder F will be replaced by *AppDSL*.
 
-In class KVSOps 'Free.inject' internally injects the KVStore into InjectK[KVStore, F],
-where the place holder F will be replaced by AppDSL.
+In class *KVSOps* *Free.inject* internally injects the *KVStore* into *InjectK[KVStore, F]*,
+where the place holder *F* will be replaced by *AppDSL*.
 
 ```scala
 // simplified def of inject
@@ -845,7 +901,7 @@ object Free {
 
 ---
 
-## Partial Lifting with InjectK (2/2)
+## Partial Lifting with *InjectK* (2/2)
 <br/>
 
 ```scala
@@ -867,19 +923,26 @@ def prog(implicit io: IoOps[AppDSL],
                   kvs: KVSOps[AppDSL]): Free[AppDSL, (String, Option[Int])] = ???
 ```
 
-In the implicit parameters we fill the place holder F with the concrete type AppDSL (= EitherK[Inout, KVStore, ?]).
+In the implicit parameters we fill the place holder *F* with the concrete type *AppDSL* ( = *EitherK[Inout, KVStore, ?]* ).
 
 .note[
-For more details see: app4a.MyApp
+For more details see: *app4a.MyApp*
 ]
 
 ---
 
+class: middle, center
+
 # 8. Composing three DSLs
-# &nbsp; &nbsp; &nbsp;and three Interpreters
+# and three Interpreters
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app5.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app5.MyApp*
 ]
 
 ---
@@ -912,7 +975,7 @@ object SeqOps {
 
 - Compose 3 DSLs with 2 type aliases.
 - Compose interpreters in the same order as the DSLs.
-- All component interpreters must have the same target type as the composed interpreter (Id in our case).
+- All component interpreters must have the same target type as the composed interpreter (*Id* in our case).
 
 ```scala
 type AppDSL0[A] = EitherK[Inout, KVStore, A]
@@ -941,11 +1004,18 @@ println(s"result = $result")
 
 ---
 
+class: middle, center
+
 # 9. Routing the workflow
-# &nbsp; &nbsp; &nbsp;through DSLs
+# through DSLs
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app6.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app6.MyApp*
 ]
 
 ---
@@ -981,10 +1051,10 @@ object LogOps {
 ## Routing the workflow through DSLs (1/2)
 <br/>
 
-- We create a composed DSL from KVStore, Sequence and Logging.
-- We create new DSL CatManagement (cats management business logic).
-- The CatManagement interpreter is implemented with the above composed interpreter. It routes requests to the other interpreters.
-- The main program is implemented in a DSL composed of Inout and CatManagement.
+- We create a composed DSL from *KVStore*, *Sequence* and *Logging*.
+- We create new DSL *CatManagement* (cats management business logic).
+- The *CatManagement* interpreter is implemented with the above composed interpreter. It routes requests to the other interpreters.
+- The main program is implemented in a DSL composed of *Inout* and *CatManagement*.
 <br/>
 <br/>
 
@@ -1016,11 +1086,11 @@ object LogOps {
 
 ---
 
-## Composing DSL from KVStore, Sequence and Logging
+## Composing a DSL from *KVStore*, *Sequence* and *Logging*
 <br/>
 We compose DSLs and interpreters as we did before.<br/>
 <br/>
-Component and composed interpreters again with same target type: Id
+Component and composed interpreters again with same target type: *Id*
 <br/>
 <br/>
 
@@ -1043,10 +1113,10 @@ val ComposedLogSeqKvsInterpreter: ComposedDSL ~> Id =
 
 ## Lifting the composed DSL into a Free Monad
 <br/>
-We need a monad for the natural transformation from the composed DSL to Id.
-By creating a type alias we lift ComposedDSL into the Free Monad.
-Then we define a new interpreter that translates from FreeComposed ~> Id
-by foldMapping the interpreter we composed before.
+We need a monad for the natural transformation from the composed DSL to *Id*.
+By creating a type alias we lift *ComposedDSL* into the Free Monad.
+Then we define a new interpreter that translates from *FreeComposed ~> Id*
+by *foldMap*ping the interpreter we composed before.
 <br/>
 <br/>
 
@@ -1094,8 +1164,8 @@ object CatOps {
 
 ## CatLogicInterpreter (1/2)
 <br/>
-CatLogicInterpreter transforms from CatManagement ~> FreeComposed
-and is implemented with the DSL composed from Logging, Sequence and KVStore.
+*CatLogicInterpreter* transforms from *CatManagement ~> FreeComposed*
+and is implemented with the DSL composed from *Logging*, *Sequence* and *KVStore*.
 <br/>
 
 ```scala
@@ -1164,9 +1234,9 @@ name: Routing_1
 
 ## Routing from one interpreter to the next
 <br/>
-CatLogicInterpreter provides a natural transformation (CatManagement ~> Id).
-It transforms (CatManagement ~> FreeComposed) <u>__andThen__</u> propagates to FreeComposedInterpreter
-which transforms (FreeComposed ~> Id).
+*CatLogicInterpreter* provides a natural transformation (*CatManagement ~> Id*).
+It transforms (*CatManagement ~> FreeComposed*) <u>*__andThen__*</u> propagates to *FreeComposedInterpreter*
+which transforms (*FreeComposed ~> Id*).
 <br/>
 <br/>
 
@@ -1177,13 +1247,13 @@ val CatLogicInterpreter: CatManagement ~> Id =
 ```
 
 <br/>
-See: [Definition of FunctionK](#FunctionK_4)
+See: [Definition of *FunctionK*](#FunctionK_4)
 
 ---
 
 ## Program definition and execution
 <br/>
-Nothing new here.
+Technically nothing new here (just DSL composition).
 <br/>
 
 ```scala
@@ -1209,11 +1279,9 @@ println(s"result = $result")
 
 ---
 
+class: middle, center
+
 # 10. Pros &amp; Cons
-<br/>
-<br/>
-<br/>
-<br/>
 <br/>
 <br/>
 <br/>
@@ -1222,9 +1290,14 @@ println(s"result = $result")
 <br/>
 
 .footnote[
+.left[
 See the following video presentations:<br/>
-- Rather on the Pro side: [Chris Myers' Talk on Free Monads at Typelevel Summit Oslo, 2016](#Resources_2)
-- Rather on the Cons side: [Kelly Robinson's Talk on Free Monads at Scala Days Berlin, 2016](#Resources_2)
+<br/>
+Rather on the Pro side:<br/>
+[Chris Myers' Talk on Free Monads at Typelevel Summit Oslo, 2016](#Resources_2)<br/>
+Rather on the Cons side:<br/>
+[Kelly Robinson's Talk on Free Monads at Scala Days Berlin, 2016](#Resources_2)
+]
 ]
 
 ---
@@ -1277,7 +1350,7 @@ To minimize drawbacks:<br/>
 - Be aware of the skill level of your team maintaining the code.
 --
 
-- Consider using Free Monads only in library code or in well encapsulated modules.
+- Consider using FMs only in library code or in well encapsulated modules.
 
 ---
 
@@ -1292,18 +1365,20 @@ __capable of solving your problem.__
 
 ---
 
-# 11. Easing Free Monads with FreeK
+class: middle, center
+
+# 11. Easing Free Monads with *FreeK*
 <br/>
 <br/>
 <br/>
 
 .footnote[
-&nbsp; &nbsp; &nbsp; &nbsp; See: app5freek.MyApp
+&nbsp; &nbsp; &nbsp; &nbsp; See: *app5freek.MyApp*
 ]
 
 ---
 
-## FreeK - What is it?
+## *FreeK* - What is it?
 <br/>
 
 It is a library, implemented with Shapeless,<br/>
@@ -1317,7 +1392,7 @@ designed to remove some of the boilerplate from your Free Monad code.
 
 ---
 
-## FreeK Example: app5freek.MyApp (1/2)
+## *FreeK* Example: *app5freek.MyApp* (1/2)
 <br/>
 <br/>
 
@@ -1344,7 +1419,7 @@ def ask2(prompt: String): Free[prg.Cop, String] =
 
 ---
 
-## FreeK Example: app5freek.MyApp (2/2)
+## *FreeK* Example: *app5freek.MyApp* (2/2)
 <br/>
 
 ```scala
@@ -1375,49 +1450,51 @@ println(s"result2 = $result2")
 
 ---
 
-## FreeK - Howto in a nutshell
+## *FreeK* - Howto in a nutshell
 <br/>
 --
 
 - Write your ADTs as before
 --
 
-- Remove all the DSL generation code with Free.liftF and Free.inject.
+- Remove all the DSL generation code using *Free.liftF* and *Free.inject*.
 --
 
 - Write your interpreters as before.
 --
 
-- Type alias composed AppDSL with the :|: operator with NilDSL at the end.
+- Type alias composed *AppDSL* with the *:|:* operator with *NilDSL* at the end.
 --
 
 - The program doesn't need implicit parameters.
 --
 
-- Invoke the uppercase case class constructors ('Getline' instead of 'getline').
+- "Invoke" the uppercase case class constructors (*Getline* instead of *getline*).
 --
 
-- Append an invocation of freek[AppDSL] (for the "heavy lifting").
+- Append an invocation of *freek[AppDSL]* (for the "heavy lifting").
 --
 
-- Append expand[AppDSL] to your own subroutines (such as 'ask').
+- Append *expand[AppDSL]* to your own subroutines (such as *ask*).
 --
 
-- Compose interpreters with the :&amp;: operator.
+- Compose interpreters with the *:&amp;:* operator.
 --
 
-- Program execution: use prog.foldMap(myInterpreter.nat). 'foldMap' is order-sensitive.
+- Program execution: use *prog.foldMap(myInterpreter.nat)*. *foldMap* is order-sensitive.
 --
 
-- Or: Use prog.interpret(myInterpreter) and omit the appendix '.nat'. 'interpret' is order-agnostic.
+- Or: Use *prog.interpret(myInterpreter)* and omit the appendix *.nat*. *interpret* is order-agnostic.
 <br/>
 <br/>
 --
 
 
-Detailed info about FreeK at: https://github.com/ProjectSeptemberInc/freek
+Detailed info about *FreeK* at: https://github.com/ProjectSeptemberInc/freek
 
 ---
+
+class: middle, center
 
 # 12. Resources
 
@@ -1488,19 +1565,16 @@ name: Resources_3
   John de Goes' Talk on Free Applicatives at Scala World, 2015<br/>
   https://www.youtube.com/watch?v=H28QqxO7Ihc
 
-
 ---
 
-class: center
+class: middle, center
 
 ## Thanks for Listening
 <br/>
 <br/>
 <br/>
-<br/>
 
 # Q &amp; A
-<br/>
 <br/>
 <br/>
 <br/>
@@ -1519,7 +1593,7 @@ https://github.com/hermannhueck/free-monad-app
         // Set the slideshow display ratio
         // Default: '4:3'
         // Alternatives: '16:9', ...
-        ratio: '16:9',
+        ratio: '4:3',
 
         // Navigation options
         navigation: {
