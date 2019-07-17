@@ -3,7 +3,7 @@ import sbt.Resolver
 name := "free-monad-app"
 version := "0.0.1-SNAPSHOT"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",   // source files are in UTF-8
